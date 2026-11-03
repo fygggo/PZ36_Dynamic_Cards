@@ -1,24 +1,38 @@
-"use strict";
+const cardForm = document.querySelector('#card-form');
+const cardInput = document.querySelector('#card-input');
+const cardList = document.querySelector('#card-list');
 
-const form = document.querySelector("#card-form");
-const input = document.querySelector("#card-input");
-const list = document.querySelector("#card-list");
-const status = document.querySelector("#card-status");
+function createCard(text) {
+    const cardHTML = `
+        <li class="item-card" data-card>
+            <span class="item-title">${text}</span>
+            <button class="remove-card" type="button" aria-label="Удалить карточку">×</button>
+        </li>
+    `;
+    cardList.insertAdjacentHTML('beforeend', cardHTML);
+}
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const title = input.value.trim();
-  if (title === "") { status.textContent = "Введите название карточки."; return; }
-  // Задание 1. Создайте li с помощью document.createElement().
-  // Добавьте класс item-card и атрибут data-card.
-  // Задание 2. Создайте span с классом item-title и button с классом remove-card.
-  // Запишите текст безопасно через textContent, добавьте дочерние элементы и list.append().
-  // Очистите поле input и обновите status.
+cardList.addEventListener('click', (event) => {
+    const card = event.target.closest('.item-card');
+    if (!card) return;
+
+    if (event.target.closest('.remove-card')) {
+        card.remove();
+        return;
+    }
+
+    card.classList.toggle('selected');
 });
 
-// Задание 3. Назначьте ОДИН обработчик click на list (делегирование).
-// Через event.target.closest(".remove-card") найдите кнопку удаления.
-// Если кнопка есть, удалите её ближайшую .item-card и завершите обработчик.
+if (cardForm) {
+    cardForm.addEventListener('submit', (event) => {
+        event.preventDefault();
 
-// Задание 4. Если кликнули не по кнопке удаления,
-// найдите event.target.closest(".item-card") и переключите is-active.
+        const taskText = cardInput.value.trim();
+
+        if (taskText) {
+            createCard(taskText);
+            cardForm.reset();
+        }
+    });
+}
